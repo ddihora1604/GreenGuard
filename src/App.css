@@ -1,0 +1,137 @@
+/* Root container */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  background-color: #f0fdf4;
+}
+
+/* Logo styles */
+.logo {
+  height: 3rem;
+  padding: 0.5rem;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 1em #22c55e);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 1em #10b981);
+}
+
+/* Animation for rotating logo */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation for floating leaf */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.floating-leaf {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Custom scrollbar styles */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #059669 #E5E7EB;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #E5E7EB;
+  border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #059669;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #047857;
+}
+
+/* Card component */
+.card {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border: 1px solid rgba(167, 243, 208, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px -1px rgb(0 0 0 / 0.15);
+}
+
+/* Backdrop blur effect */
+.backdrop-blur {
+  backdrop-filter: blur(12px);
+}
+
+/* Chat container styling */
+.chat-container {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(167, 243, 208, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Message bubble styling */
+.message-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(167, 243, 208, 0.2);
+}
+
+.message-bubble.user {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Input field styling */
+.chat-input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(167, 243, 208, 0.3);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+}

@@ -1,0 +1,10 @@
+flask==2.3.3
+flask-cors==4.0.0
+pillow==10.0.0
+tensorflow==2.19.0
+numpy==1.26.0
+python-dotenv==0.21.0  # Updated version
+langchain-groq==0.1.4
+gunicorn==21.2.0
+python-multipart==0.0.9
+langchain # Updated to latest stable version

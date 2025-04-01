@@ -1,0 +1,216 @@
+/* Import Merriweather font */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2315803d' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --theme-transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Merriweather', serif;
+  }
+
+  /* Apply Merriweather to all text elements */
+  body, h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea {
+    font-family: 'Merriweather', serif;
+  }
+
+  /* Adjust font weights for better readability with Merriweather */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  /* Adjust specific text elements */
+  .sidebar-label {
+    @apply font-medium;
+  }
+
+  .nav-title {
+    @apply font-bold;
+  }
+
+  /* Enhance notification text */
+  .notification-title {
+    @apply font-semibold;
+  }
+
+  .notification-message {
+    @apply font-normal;
+  }
+
+  body {
+    @apply text-gray-800 bg-gradient-to-br from-white via-green-50 to-emerald-50;
+    background-image: var(--background-pattern);
+    transition: var(--theme-transition);
+  }
+}
+
+/* Prose styles with dark mode */
+.prose {
+  @apply text-current;
+  transition: var(--theme-transition);
+}
+
+.prose p {
+  @apply mb-2 text-gray-700 dark:text-gray-300;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold mt-4 mb-2 text-green-900 dark:text-emerald-500;
+}
+
+.prose ul {
+  @apply list-disc pl-5 mb-2 text-gray-700 dark:text-gray-300;
+}
+
+.prose li {
+  @apply mb-1;
+}
+
+/* Custom scrollbar with enhanced dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-green-50 dark:bg-gray-800;
+  transition: var(--theme-transition);
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-green-600 dark:bg-emerald-800 rounded-full;
+  transition: var(--theme-transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-green-700 dark:bg-emerald-700;
+}
+
+/* Chat animations */
+@keyframes typing {
+  0% { opacity: .2; }
+  20% { opacity: 1; }
+  100% { opacity: .2; }
+}
+
+.typing span {
+  animation: typing 1.4s infinite;
+}
+
+.typing span:nth-child(1) { animation-delay: 0s; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@layer components {
+  .main-content-layout {
+    @apply transition-all duration-300 ease-in-out;
+    margin-left: theme('spacing.20');
+  }
+
+  @screen md {
+    .main-content-layout {
+      margin-left: theme('spacing.72');
+    }
+    
+    .main-content-layout.sidebar-collapsed {
+      margin-left: theme('spacing.20');
+    }
+  }
+
+  /* Theme transition classes */
+  .theme-transition {
+    transition: var(--theme-transition);
+  }
+
+  /* Card styles with enhanced dark mode */
+  .card {
+    @apply bg-white dark:bg-gray-900
+           shadow-lg shadow-green-100 dark:shadow-emerald-900/20
+           border border-green-100 dark:border-emerald-900/20
+           backdrop-blur-sm;
+    transition: var(--theme-transition);
+  }
+
+  /* Input styles with enhanced dark mode */
+  .input {
+    @apply bg-white dark:bg-gray-900
+           border-green-200 dark:border-emerald-900/30
+           text-gray-800 dark:text-gray-200
+           placeholder-gray-500 dark:placeholder-gray-500
+           focus:ring-2 focus:ring-green-600 dark:focus:ring-emerald-700
+           focus:border-green-600 dark:focus:border-emerald-700;
+    transition: var(--theme-transition);
+  }
+
+  /* Button styles with enhanced dark mode */
+  .btn {
+    @apply bg-green-600 dark:bg-emerald-700
+           hover:bg-green-700 dark:hover:bg-emerald-800
+           text-white dark:text-gray-100
+           shadow-sm shadow-green-100 dark:shadow-emerald-900/20
+           hover:shadow-md hover:shadow-green-200 dark:hover:shadow-emerald-900/30
+           active:scale-95;
+    transition: var(--theme-transition);
+  }
+
+  /* Link styles with dark mode */
+  .link {
+    @apply text-green-700 dark:text-emerald-500
+           hover:text-green-800 dark:hover:text-emerald-400
+           underline decoration-2 decoration-green-500/30 dark:decoration-emerald-600/30
+           hover:decoration-green-600 dark:hover:decoration-emerald-500;
+    transition: var(--theme-transition);
+  }
+
+  /* Badge styles with dark mode */
+  .badge {
+    @apply px-2 py-1 text-sm rounded-full
+           bg-green-50 dark:bg-emerald-900/50
+           text-green-800 dark:text-emerald-300
+           border border-green-200 dark:border-emerald-800;
+    transition: var(--theme-transition);
+  }
+
+  /* Panel styles with dark mode */
+  .panel {
+    @apply bg-white/95 dark:bg-gray-900/95
+           border border-green-100 dark:border-emerald-900/20
+           shadow-lg shadow-green-100/50 dark:shadow-emerald-900/30
+           backdrop-blur-sm;
+    transition: var(--theme-transition);
+  }
+
+  /* Form control styles */
+  .form-control {
+    @apply bg-white dark:bg-gray-900
+           border border-green-200 dark:border-emerald-900/30
+           focus:border-green-600 dark:focus:border-emerald-700
+           focus:ring-2 focus:ring-green-600/20 dark:focus:ring-emerald-700/20
+           text-gray-800 dark:text-gray-200
+           placeholder-gray-400 dark:placeholder-gray-600;
+    transition: var(--theme-transition);
+  }
+
+  /* Table styles */
+  .table {
+    @apply w-full border-collapse;
+  }
+
+  .table th {
+    @apply bg-green-50 dark:bg-gray-800
+           text-green-900 dark:text-emerald-400
+           border-b border-green-200 dark:border-emerald-900/30
+           px-4 py-2 text-left;
+  }
+
+  .table td {
+    @apply border-b border-green-100 dark:border-emerald-900/20
+           px-4 py-2 text-gray-700 dark:text-gray-300;
+  }
+
+  .table tr:hover {
+    @apply bg-green-50/50 dark:bg-emerald-900/20;
+  }
+}
