@@ -194,24 +194,6 @@ class DiseasePredictor:
                 'error': error_msg
             }
 
-def load_agdfnet(model_path):
-    """Load the model with custom components."""
-    try:
-        # Define custom objects dictionary
-        custom_objects = {
-            'AdaptiveLesionModule': AdaptiveLesionModule,
-            'adaptive_focal_loss': adaptive_focal_loss
-        }
-        
-        # Load the model with custom objects
-        model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
-        print("Model loaded successfully!")
-        return model
-    
-    except Exception as e:
-        print(f"Error loading model: {str(e)}")
-        return None
-
 def analyze_image(image_path):
     """Global function to analyze image using a new DiseasePredictor instance."""
     try:

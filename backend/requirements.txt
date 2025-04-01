@@ -1,10 +1,17 @@
+# Web server
 flask==2.3.3
 flask-cors==4.0.0
-pillow==10.0.0
+werkzeug==2.3.7
+
+# Machine Learning
 tensorflow==2.19.0
 numpy==1.26.0
-python-dotenv==0.21.0  # Updated version
+pillow==10.0.0
+
+# LLM Integration
+python-dotenv==0.21.0
 langchain-groq==0.1.4
+langchain==0.1.0
+
+# Production server (optional)
 gunicorn==21.2.0
-python-multipart==0.0.9
-langchain # Updated to latest stable version
