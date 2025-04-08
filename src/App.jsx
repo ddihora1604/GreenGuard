@@ -17,6 +17,7 @@ import NotificationManager, { NotificationActions } from './components/Notificat
 import { useRandomNotifications } from './hooks/useRandomNotifications';
 import { useActionNotifications } from './hooks/useActionNotifications';
 import { MessageSquare, BarChart2 } from 'lucide-react';
+import TeamPage from './pages/TeamPage';
 
 const DashboardPage = ({ handleImageProcess, isCollapsed }) => {
   const {
@@ -769,7 +770,10 @@ function AppContent() {
             />
             <Route path="/fertilizers" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Fertilizers</div>} />
             <Route path="/connect-farmers" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Connect to Farmers</div>} />
-            <Route path="/connect-team" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Connect to Team</div>} />
+            <Route 
+              path="/connect-team" 
+              element={<TeamPage isCollapsed={isSidebarCollapsed} />} 
+            />
             <Route path="/profile" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Profile</div>} />
           </Routes>
         </main>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell } from 'lucide-react';
+import { Bell, Mic } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import NotificationPanel from './NotificationPanel';
@@ -120,37 +120,54 @@ const Navbar = ({ isCollapsed }) => {
             </div>
           </motion.div>
 
-          {/* Notification button */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative"
-          >
-            <button 
-              onClick={() => setIsNotificationsPanelOpen(true)}
-              className="p-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg bg-white hover:bg-green-50 border-green-200 border"
-              aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
+          {/* Notification and Microphone buttons */}
+          <div className="flex items-center gap-2">
+            {/* Microphone button */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative"
             >
-              <Bell className="h-5 w-5 text-green-700" />
-              <AnimatePresence mode="wait">
-                {unreadCount > 0 && (
-                  <motion.div
-                    key={unreadCount}
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.5, opacity: 0 }}
-                    transition={{ duration: 0.3, type: "spring" }}
-                    className="absolute -top-0.5 -right-0.5 flex items-center justify-center"
-                  >
-                    <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75 h-4 w-4" style={{ animationDuration: '2s' }}></div>
-                    <div className="relative z-10 h-4 min-w-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-medium">
-                      {formatNotificationCount(unreadCount)}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-          </motion.div>
+              <button 
+                className="p-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg bg-white hover:bg-green-50 border-green-200 border"
+                aria-label="Voice input"
+              >
+                <Mic className="h-5 w-5 text-green-700" />
+              </button>
+            </motion.div>
+
+            {/* Notification button */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative"
+            >
+              <button 
+                onClick={() => setIsNotificationsPanelOpen(true)}
+                className="p-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg bg-white hover:bg-green-50 border-green-200 border"
+                aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
+              >
+                <Bell className="h-5 w-5 text-green-700" />
+                <AnimatePresence mode="wait">
+                  {unreadCount > 0 && (
+                    <motion.div
+                      key={unreadCount}
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.5, opacity: 0 }}
+                      transition={{ duration: 0.3, type: "spring" }}
+                      className="absolute -top-0.5 -right-0.5 flex items-center justify-center"
+                    >
+                      <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75 h-4 w-4" style={{ animationDuration: '2s' }}></div>
+                      <div className="relative z-10 h-4 min-w-4 px-1 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-medium">
+                        {formatNotificationCount(unreadCount)}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+            </motion.div>
+          </div>
         </div>
       </div>
 

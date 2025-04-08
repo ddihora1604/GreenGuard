@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageSquare, ChevronLeft, Leaf, Flower, Sprout, Users, Users2, History } from 'lucide-react';
+import { MessageSquare, ChevronLeft, Leaf, Flower, Sprout, Users, Users2, History, BookOpen } from 'lucide-react';
 import PropTypes from 'prop-types';
 import ProfileSlider from './ProfileSlider';
 // Import logo images with relative paths
@@ -42,7 +42,7 @@ const Sidebar = ({ isCollapsed, onToggle, showChatbot }) => {
       iconClass: 'text-green-600 group-hover:text-green-700'
     },
     { 
-      icon: Leaf,
+      icon: BookOpen,
       label: 'Crops and Diseases',
       path: '/crops-diseases',
       color: 'bg-white',
