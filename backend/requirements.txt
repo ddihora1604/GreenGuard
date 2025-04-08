@@ -4,7 +4,7 @@ flask-cors==4.0.0
 werkzeug==2.3.7
 
 # Machine Learning
-tensorflow==2.19.0
+# tensorflow==2.19.0
 numpy==1.26.0
 pillow==10.0.0
 
