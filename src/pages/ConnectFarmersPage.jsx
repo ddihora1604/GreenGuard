@@ -22,6 +22,34 @@ const ProfessionalsMap = ({ searchResults, selectedProfessional, setSelectedProf
   const defaultCenter = [20.5937, 78.9629];
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
+
+  // Helper function to create popup HTML content
+  const createPopupContent = (professional) => {
+    const iconUrl = professional.expertise === 'Farmer' ? 
+      'https://cdn-icons-png.flaticon.com/128/10476/10476884.png' : 
+      professional.expertise === 'Agricultural Officer' ? 
+      'https://cdn-icons-png.flaticon.com/128/3522/3522598.png' : 
+      professional.gender === 'male' ? 
+      'https://cdn-icons-png.flaticon.com/128/2088/2088111.png' : 
+      professional.gender === 'female' ? 
+      'https://cdn-icons-png.flaticon.com/128/2923/2923137.png' : 
+      'https://cdn-icons-png.flaticon.com/128/1995/1995450.png';
+    
+    return `
+      <div class="popup-content text-center">
+        <img 
+          src="${iconUrl}"
+          alt="${professional.expertise || 'Professional'}"
+          class="w-12 h-12 rounded-full mx-auto mb-2"
+        />
+        <h3 class="font-semibold text-green-800">${professional.name}</h3>
+        ${professional.expertise ? `<p class="text-sm">${professional.expertise}</p>` : ''}
+        ${professional.location ? `<p class="text-sm">${professional.location}</p>` : ''}
+        ${professional.cropSpecialization ? `<p class="text-sm">Crop: ${professional.cropSpecialization}</p>` : ''}
+      </div>
+    `;
+  };
 
   // Initialize map
   useEffect(() => {
@@ -31,6 +59,9 @@ const ProfessionalsMap = ({ searchResults, selectedProfessional, setSelectedProf
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mapInstance);
+
+    // Add scale control
+    L.control.scale().addTo(mapInstance);
 
     setMap(mapInstance);
 
@@ -47,42 +78,52 @@ const ProfessionalsMap = ({ searchResults, selectedProfessional, setSelectedProf
     if (!map) return;
 
     // Clear existing markers
-    map.eachLayer((layer) => {
-      if (layer instanceof L.Marker) {
-        map.removeLayer(layer);
-      }
-    });
+    markers.forEach(marker => map.removeLayer(marker));
+    setMarkers([]);
+
+    const newMarkers = [];
 
     // Add new markers
     searchResults.filter(p => p.lat && p.lon).forEach((professional) => {
-      const marker = L.marker([professional.lat, professional.lon], {
-        icon: getProfessionalIcon(professional.expertise, professional.gender)
-      }).addTo(map);
+      try {
+        const latlng = [parseFloat(professional.lat), parseFloat(professional.lon)];
+        
+        // Skip invalid coordinates
+        if (isNaN(latlng[0]) || isNaN(latlng[1]) || 
+            latlng[0] < -90 || latlng[0] > 90 || 
+            latlng[1] < -180 || latlng[1] > 180) {
+          console.warn(`Invalid coordinates for ${professional.name}:`, latlng);
+          return;
+        }
+        
+        const marker = L.marker(latlng, {
+          icon: getProfessionalIcon(professional.expertise, professional.gender)
+        }).addTo(map);
 
-      marker.bindPopup(`
-        <div class="popup-content text-center">
-          <img 
-            src="${professional.expertise === 'Farmer' ? 
-              'https://cdn-icons-png.flaticon.com/128/10476/10476884.png' : 
-              professional.expertise === 'Agricultural Officer' ? 
-              'https://cdn-icons-png.flaticon.com/128/3522/3522598.png' : 
-              professional.gender === 'male' ? 
-              'https://cdn-icons-png.flaticon.com/128/2088/2088111.png' : 
-              professional.gender === 'female' ? 
-              'https://cdn-icons-png.flaticon.com/128/2923/2923137.png' : 
-              'https://cdn-icons-png.flaticon.com/128/1995/1995450.png'}"
-            alt="${professional.expertise}"
-            class="w-12 h-12 rounded-full mx-auto mb-2"
-          />
-          <h3 class="font-semibold text-green-800">${professional.name}</h3>
-          ${professional.expertise ? `<p class="text-sm">${professional.expertise}</p>` : ''}
-          ${professional.location ? `<p class="text-sm">${professional.location}</p>` : ''}
-          ${professional.cropSpecialization ? `<p class="text-sm">Crop: ${professional.cropSpecialization}</p>` : ''}
-        </div>
-      `);
+        // Create and bind popup with the extracted function
+        marker.bindPopup(createPopupContent(professional));
 
-      marker.on('click', () => setSelectedProfessional(professional));
+        marker.on('click', () => setSelectedProfessional(professional));
+        newMarkers.push(marker);
+      } catch (error) {
+        console.error(`Error adding marker for ${professional.name}:`, error);
+      }
     });
+
+    setMarkers(newMarkers);
+
+    // Auto-zoom to fit all markers if we have more than one
+    if (newMarkers.length > 1) {
+      const group = new L.featureGroup(newMarkers);
+      map.fitBounds(group.getBounds(), { padding: [50, 50] });
+    } else if (newMarkers.length === 1) {
+      // If only one marker, center on it with a specific zoom level
+      const marker = newMarkers[0];
+      map.setView(marker.getLatLng(), 12);
+    } else {
+      // If no markers, reset to default view
+      map.setView(defaultCenter, 5);
+    }
   }, [map, searchResults, getProfessionalIcon, setSelectedProfessional]);
 
   // Handle selected professional
@@ -90,11 +131,32 @@ const ProfessionalsMap = ({ searchResults, selectedProfessional, setSelectedProf
     if (!map || !selectedProfessional) return;
 
     if (selectedProfessional.lat && selectedProfessional.lon) {
-      map.flyTo([selectedProfessional.lat, selectedProfessional.lon], 14, {
-        duration: 1
-      });
+      try {
+        const latlng = [parseFloat(selectedProfessional.lat), parseFloat(selectedProfessional.lon)];
+        
+        // Validate coordinates before flying to them
+        if (!isNaN(latlng[0]) && !isNaN(latlng[1]) && 
+            latlng[0] >= -90 && latlng[0] <= 90 && 
+            latlng[1] >= -180 && latlng[1] <= 180) {
+          map.flyTo(latlng, 14, {
+            duration: 1
+          });
+          
+          // Find and open the popup for this professional
+          markers.forEach(marker => {
+            const markerLatLng = marker.getLatLng();
+            if (markerLatLng.lat === latlng[0] && markerLatLng.lng === latlng[1]) {
+              marker.openPopup();
+            }
+          });
+        } else {
+          console.warn(`Cannot fly to invalid coordinates for ${selectedProfessional.name}:`, latlng);
+        }
+      } catch (error) {
+        console.error(`Error flying to ${selectedProfessional.name}:`, error);
+      }
     }
-  }, [map, selectedProfessional]);
+  }, [map, selectedProfessional, markers]);
 
   return (
     <div 
@@ -329,53 +391,149 @@ const ConnectFarmersPage = ({ isCollapsed }) => {
     setError(null);
     setSelectedProfessional(null);
     
+    // Skip API call and use local data directly
+    // This is a workaround until the API is properly set up
+    filterLocalData();
+    
+    // Keep the API code commented out until the API is ready to use
+    /*
     try {
-      // Filter professionals based on search parameters
-      let filteredResults = [...professionalDatabase];
+      // Build query parameters based on filter selections
+      const queryParams = new URLSearchParams();
       
-      // Filter by expertise
-      if (searchParams.expertise !== "Any") {
-        filteredResults = filteredResults.filter(prof => 
-          prof.expertise === searchParams.expertise
-        );
+      if (searchParams.expertise !== 'Any') {
+        queryParams.append('expertise', searchParams.expertise);
       }
       
-      // Filter by location
-      if (searchParams.location !== "Any") {
-        filteredResults = filteredResults.filter(prof => 
-          prof.location === searchParams.location
-        );
+      if (searchParams.location !== 'Any') {
+        queryParams.append('location', searchParams.location);
       }
       
-      // Filter by crop type
-      if (searchParams.cropType !== "Any") {
-        filteredResults = filteredResults.filter(prof => 
-          prof.cropSpecialization === searchParams.cropType
-        );
+      if (searchParams.cropType !== 'Any') {
+        queryParams.append('cropType', searchParams.cropType);
       }
       
-      // Filter by keywords
-      if (searchParams.keywords.trim() !== "") {
-        const keywords = searchParams.keywords.toLowerCase().split(" ");
-        filteredResults = filteredResults.filter(prof => {
-          return keywords.some(keyword => 
-            prof.name.toLowerCase().includes(keyword) ||
-            prof.expertise.toLowerCase().includes(keyword) ||
-            prof.location.toLowerCase().includes(keyword) ||
-            prof.cropSpecialization.toLowerCase().includes(keyword) ||
-            (prof.address && prof.address.toLowerCase().includes(keyword))
-          );
+      if (searchParams.keywords.trim() !== '') {
+        queryParams.append('keywords', searchParams.keywords.trim());
+      }
+      
+      // Make API call to fetch professionals based on filters
+      const apiUrl = `${import.meta.env.VITE_API_BASE_URL || 'https://api.greengaurd.com'}/api/agricultural-professionals`;
+      
+      // Add timeout to avoid waiting indefinitely for API response
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      try {
+        const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json'
+          }
         });
+        
+        // Clear timeout
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Validate each professional's data
+        const validatedResults = data.map(professional => {
+          // Ensure each professional has valid location data for mapping
+          if (!professional.lat || !professional.lon) {
+            // Log warning but don't exclude the professional from results
+            console.warn(`Professional ${professional.name} has invalid location data`);
+          }
+          
+          return {
+            ...professional,
+            // Ensure required fields have default values if missing
+            id: professional.id || `temp-${Math.random().toString(36).substring(7)}`,
+            expertise: professional.expertise || 'Not specified',
+            location: professional.location || 'Not specified',
+            gender: professional.gender || 'unknown'
+          };
+        });
+        
+        // Filter out any professionals with completely invalid data
+        const filteredResults = validatedResults.filter(prof => 
+          prof.name && (prof.expertise || prof.location || prof.cropSpecialization)
+        );
+        
+        setSearchResults(filteredResults);
+        
+        // If no results found after API call
+        if (filteredResults.length === 0) {
+          console.log('No professionals found with the specified criteria');
+        }
+      } catch (fetchError) {
+        // Check if this is a timeout or network error
+        if (fetchError.name === 'AbortError') {
+          throw new Error('Request timed out. The server took too long to respond.');
+        } else if (!navigator.onLine) {
+          throw new Error('You appear to be offline. Please check your internet connection.');
+        }
+        throw fetchError;
       }
       
-      // Set search results
-      setSearchResults(filteredResults);
       setIsLoading(false);
     } catch (err) {
-      console.error("Search error:", err);
-      setError(err.message);
-      setIsLoading(false);
+      console.error('Search error:', err);
+      
+      // Display appropriate error message
+      const errorMessage = err.message || 'Failed to fetch professionals';
+      setError(`${errorMessage}`);
+      
+      // Fallback to database if API fails (for development/demo purposes)
+      console.warn('API failed, falling back to local database');
+      
+      filterLocalData();
     }
+    */
+  };
+  
+  // Function to filter and use local data
+  const filterLocalData = () => {
+    // Apply filters to local database
+    let filteredResults = [...professionalDatabase];
+    
+    if (searchParams.expertise !== 'Any') {
+      filteredResults = filteredResults.filter(prof => 
+        prof.expertise === searchParams.expertise
+      );
+    }
+    
+    if (searchParams.location !== 'Any') {
+      filteredResults = filteredResults.filter(prof => 
+        prof.location === searchParams.location
+      );
+    }
+    
+    if (searchParams.cropType !== 'Any') {
+      filteredResults = filteredResults.filter(prof => 
+        prof.cropSpecialization === searchParams.cropType
+      );
+    }
+    
+    if (searchParams.keywords.trim() !== '') {
+      const keywords = searchParams.keywords.toLowerCase().split(' ');
+      filteredResults = filteredResults.filter(prof => {
+        return keywords.some(keyword => 
+          prof.name.toLowerCase().includes(keyword) ||
+          prof.expertise.toLowerCase().includes(keyword) ||
+          prof.location.toLowerCase().includes(keyword) ||
+          prof.cropSpecialization?.toLowerCase().includes(keyword) ||
+          (prof.address && prof.address.toLowerCase().includes(keyword))
+        );
+      });
+    }
+    
+    setSearchResults(filteredResults);
+    setIsLoading(false);
   };
 
   // Custom icons based on expertise and gender
@@ -501,7 +659,14 @@ const ConnectFarmersPage = ({ isCollapsed }) => {
               <h2 className="text-xl font-semibold text-green-700 mb-4">Search Results</h2>
               
               {isLoading ? (
-                <div className="bg-green-50 p-4 rounded text-green-700">Loading agricultural professional information...</div>
+                <div className="bg-green-50 p-6 rounded text-green-700 flex flex-col items-center">
+                  <svg className="animate-spin h-8 w-8 text-green-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p>Loading agricultural professional information...</p>
+                  <p className="text-sm mt-2">Fetching data based on your filter criteria...</p>
+                </div>
               ) : searchResults.length === 0 ? (
                 <div className="bg-blue-50 p-4 rounded text-blue-700">
                   No agricultural professionals match your search criteria. Please try different filters.
@@ -632,7 +797,7 @@ const ConnectFarmersPage = ({ isCollapsed }) => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-600">Use the filters above and click "Search for Professionals" to find agricultural experts in your area.</p>
+            <p className="text-gray-600">Use the filters above and click &apos;Search for Professionals&apos; to find agricultural experts in your area.</p>
           </div>
         )}
       </div>
