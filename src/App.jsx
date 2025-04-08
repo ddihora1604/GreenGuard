@@ -12,6 +12,7 @@ import axios from 'axios';
 import { AppProvider, useApp } from './context/AppContext';
 import './App.css';
 import DetectionHistoryPage from './pages/DetectionHistoryPage';
+import ConnectFarmersPage from './pages/ConnectFarmersPage';
 import { NotificationProvider, useNotifications } from './context/NotificationContext';
 import NotificationManager, { NotificationActions } from './components/NotificationManager';
 import { useRandomNotifications } from './hooks/useRandomNotifications';
@@ -769,7 +770,7 @@ function AppContent() {
               } 
             />
             <Route path="/fertilizers" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Fertilizers</div>} />
-            <Route path="/connect-farmers" element={<div className={`main-content-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} p-6`}>Connect to Farmers</div>} />
+            <Route path="/connect-farmers" element={<ConnectFarmersPage isCollapsed={isSidebarCollapsed} />} />
             <Route 
               path="/connect-team" 
               element={<TeamPage isCollapsed={isSidebarCollapsed} />} 

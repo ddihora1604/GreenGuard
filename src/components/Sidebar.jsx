@@ -8,7 +8,7 @@ import ProfileSlider from './ProfileSlider';
 import logoFull from '../assets/images/Logo2 Without Background.png';
 import logoIcon from '../assets/images/Logo3 Light Green Without Background.png';
 
-const Sidebar = ({ isCollapsed, onToggle, showChatbot }) => {
+const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = React.useState(false);
@@ -410,12 +410,6 @@ Sidebar.propTypes = {
   isCollapsed: PropTypes.bool,
   onToggle: PropTypes.func,
   showChatbot: PropTypes.bool
-};
-
-Sidebar.defaultProps = {
-  isCollapsed: false,
-  onToggle: () => {},
-  showChatbot: false
 };
 
 export default Sidebar;
