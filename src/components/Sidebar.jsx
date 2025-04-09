@@ -240,6 +240,14 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
                       `}
                       title={isCollapsed ? item.label : ''}
                     >
+                      {/* Hover label for "New Detection" */}
+                      {item.isSpecial && item.hoverLabel && (
+                        <div className="absolute right-0 transform translate-x-full -translate-y-1/2 top-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                          <div className="bg-emerald-600 text-white text-xs font-medium py-1 px-2 rounded shadow-md whitespace-nowrap ml-2">
+                            {item.hoverLabel}
+                          </div>
+                        </div>
+                      )}
                       <div className="relative flex items-center justify-center">
                         <item.icon 
                           className={`
