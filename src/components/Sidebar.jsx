@@ -88,9 +88,7 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
         path: '/chatbot',
         color: 'bg-white',
         key: 'chatbot',
-        iconClass: 'text-emerald-500 group-hover:text-emerald-600',
-        isSubpage: true,  // Mark this as a subpage
-        parentKey: 'dashboard' // Link to parent
+        iconClass: 'text-emerald-600 group-hover:text-emerald-700'
       };
       
       // Find the index of the Dashboard item
@@ -107,13 +105,7 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
 
   // Function to check if an item is active 
   const isItemActive = (item) => {
-    // For normal items
-    if (location.pathname === item.path) return true;
-    
-    // For parent items with active subpages
-    if (item.key === 'dashboard' && location.pathname === '/chatbot' && showChatbot) return true;
-    
-    return false;
+    return location.pathname === item.path;
   };
 
   // Special rendering for collapsed sidebar subpages
@@ -217,8 +209,6 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
 
           <nav className="flex flex-col space-y-1.5 flex-1">
             {getDynamicMenuItems().map((item) => {
-              // Check if this item has a subpage that follows it
-              const hasActiveSubpage = item.key === 'dashboard' && location.pathname === '/chatbot' && showChatbot;
               const isActive = isItemActive(item);
               
               return (
@@ -227,16 +217,10 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
                   <motion.div
                     initial={false}
                     style={{
-                      width: isCollapsed ? '40px' : item.isSubpage ? '90%' : '100%',
+                      width: isCollapsed ? '40px' : '100%',
                       margin: '0 auto'
                     }}
-                    className={`relative ${item.isSubpage ? (!isCollapsed ? 'ml-6 -mt-1' : '') : ''}`}
                   >
-                    {/* Add a vertical connector line between Dashboard and Chatbot when not collapsed */}
-                    {!isCollapsed && item.isSubpage && (
-                      <div className="absolute left-2 top-0 w-[1px] h-[10px] bg-emerald-500/30"></div>
-                    )}
-                    
                     <Link
                       to={item.path}
                       onClick={(e) => handleGreenGuardClick(e, item)}
@@ -249,42 +233,23 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
                             : 'hover:bg-[#222222] text-gray-300 hover:text-[#3CB371] border border-transparent hover:border-[#8B4513]/30'
                         }
                         ${isCollapsed 
-                          ? `justify-center w-10 h-10 p-2 ${item.isSubpage ? 'w-8 h-8 mt-1 ml-1 bg-[#1f1f1f]' : ''}` 
+                          ? 'justify-center w-10 h-10 p-2' 
                           : 'justify-start w-full px-4 py-3'
                         }
-                        ${item.isSubpage 
-                          ? (!isCollapsed 
-                            ? 'text-sm py-1.5 pl-4 pr-2 bg-[#1f1f1f] shadow-inner shadow-black/20' 
-                            : 'border-l-2 border-emerald-500/30')
-                          : ''
-                        } 
                         backdrop-blur-sm hover:shadow-[#1a1a1a]/20
-                        ${hasActiveSubpage && !item.isSubpage ? 'border-l-2 border-l-emerald-500' : ''}
                       `}
                       title={isCollapsed ? item.label : ''}
                     >
-                      {/* For subpages, show a small connector line
-                      {!isCollapsed && item.isSubpage && (
-                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-3 h-0 flex items-center">
-                          <div className="w-2 h-[1px] bg-emerald-500/50"></div>
-                        </div>
-                      )} */}
-                      
-                      {/* Show indicator for collapsed subpages */}
-                      {renderCollapsedSubpage(item)}
-                      
                       <div className="relative flex items-center justify-center">
                         <item.icon 
                           className={`
                             transition-all duration-200
-                            ${isCollapsed ? 'w-5 h-5' : item.isSubpage ? 'w-3.5 h-3.5' : 'w-5 h-5'}
+                            ${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'}
                             ${item.isSpecial 
                               ? 'text-gray-100' 
                               : isActive
                                 ? 'text-[#3CB371]'
-                                : item.isSubpage
-                                  ? 'text-emerald-500/70 group-hover:text-emerald-500'
-                                  : 'text-gray-400 group-hover:text-[#3CB371]'
+                                : 'text-gray-400 group-hover:text-[#3CB371]'
                             }
                             group-hover:scale-105
                           `}
@@ -292,40 +257,9 @@ const Sidebar = ({ isCollapsed = false, onToggle = () => {}, showChatbot = false
                       </div>
                       
                       {!isCollapsed && (
-                        <span className={`ml-4 font-medium whitespace-nowrap overflow-hidden 
-                          ${item.isSubpage ? 'text-xs opacity-90 font-normal' : ''}`}
-                        >
+                        <span className="ml-4 font-medium whitespace-nowrap overflow-hidden">
                           {item.label}
                         </span>
-                      )}
-
-                      {/* Add hover label for the GreenGuard menu item */}
-                      {item.isSpecial && item.hoverLabel && (
-                        <div className={`
-                          absolute ${isCollapsed ? 'left-12' : 'right-0 translate-x-[105%]'}
-                          top-1/2 -translate-y-1/2
-                          px-3 py-1.5
-                          rounded-lg
-                          bg-gradient-to-r from-[#2E8B57] to-[#3CB371]
-                          text-white text-sm font-medium
-                          shadow-lg
-                          opacity-0 group-hover:opacity-100
-                          pointer-events-none
-                          transition-opacity duration-200
-                          flex items-center
-                          whitespace-nowrap
-                          z-50
-                        `}>
-                          {/* Arrow pointing to the menu item */}
-                          <div className={`
-                            absolute ${isCollapsed ? 'left-0 -translate-x-1/2' : 'right-full translate-x-1/2'}
-                            top-1/2 -translate-y-1/2
-                            w-2 h-2
-                            bg-[#2E8B57]
-                            transform ${isCollapsed ? 'rotate-45' : '-rotate-45'}
-                          `}></div>
-                          {item.hoverLabel}
-                        </div>
                       )}
                     </Link>
                   </motion.div>

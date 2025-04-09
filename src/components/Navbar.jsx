@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import NotificationPanel from './NotificationPanel';
 import { useNotifications } from '../context/NotificationContext';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar = ({ isCollapsed }) => {
   const location = useLocation();
@@ -120,8 +121,11 @@ const Navbar = ({ isCollapsed }) => {
             </div>
           </motion.div>
 
-          {/* Notification and Microphone buttons */}
+          {/* Language selector, Microphone, and Notification buttons */}
           <div className="flex items-center gap-2">
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* Microphone button */}
             <motion.div
               whileHover={{ scale: 1.05 }}

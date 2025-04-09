@@ -1,16 +1,21 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logoIcon from '../assets/images/Logo3 Light Green Without Background.png';
+import { useApp } from '../context/AppContext';
+import { useActionNotifications } from '../context/ActionNotificationContext';
 
 const PROFILE_IMAGE_URL = "https://t3.ftcdn.net/jpg/03/26/84/88/360_F_326848805_qtf1DQC7b5IOsOw0f4PhUV5ubr3W7Oho.jpg";
 
-const ChatMessage = ({ message, isResponseAfterImage = false }) => {
+const ChatMessage = ({ message, isResponseAfterImage = false, index }) => {
   const isUser = message.type === 'user';
   const isTyping = message.status === 'typing';
   const isError = message.status === 'error';
   const [copied, setCopied] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const { updateMessage } = useApp();
+  const { showActionNotification } = useActionNotifications();
 
   const formatTimestamp = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { 
@@ -25,6 +30,7 @@ const ChatMessage = ({ message, isResponseAfterImage = false }) => {
         .then(() => {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
+          showActionNotification('Item copied to clipboard', 'success', 2000);
         })
         .catch(err => {
           console.error('Failed to copy: ', err);
@@ -33,14 +39,44 @@ const ChatMessage = ({ message, isResponseAfterImage = false }) => {
   };
 
   const handleRegenerate = () => {
-    // To be implemented: Logic to regenerate the response
-    console.log('Regenerating response...');
+    // Update the existing message with a new timestamp
+    updateMessage(index, {
+      ...message,
+      timestamp: new Date(),
+      status: message.status === 'error' ? undefined : message.status // Clear error status if present
+    });
   };
 
   const handleFeedback = (isPositive) => {
     // To be implemented: Logic to handle feedback
     console.log(`Feedback: ${isPositive ? 'Positive' : 'Negative'}`);
   };
+
+  const handleSpeak = () => {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+
+      if (isSpeaking) {
+        setIsSpeaking(false);
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(message.content);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      setIsSpeaking(true);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   return (
     <motion.div
@@ -285,6 +321,31 @@ const ChatMessage = ({ message, isResponseAfterImage = false }) => {
               </div>
               
               <div className="flex space-x-1 ml-1">
+                {!isUser && message.content && !isTyping && (
+                  <button 
+                    onClick={handleSpeak}
+                    className="flex items-center px-2 py-1 text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-md transition-colors"
+                    title={isSpeaking ? 'Stop speaking' : 'Speak text'}
+                  >
+                    <svg 
+                      className="w-4 h-4" 
+                      fill="currentColor"
+                      viewBox="0 0 24 24" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      {isSpeaking ? (
+                        <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+                      ) : (
+                        <>
+                          <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+                          <path d="M15.54 8.46C16.9257 9.84645 17.7225 11.7563 17.7225 13.755C17.7225 15.7537 16.9257 17.6636 15.54 19.05" />
+                          <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 22 12C22 14.6516 20.9447 17.1947 19.07 19.07" />
+                        </>
+                      )}
+                    </svg>
+                  </button>
+                )}
+
                 <button 
                   onClick={copyToClipboard}
                   className="flex items-center px-2 py-1 text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-md transition-colors"
@@ -312,17 +373,19 @@ const ChatMessage = ({ message, isResponseAfterImage = false }) => {
                 
                 <button 
                   onClick={handleRegenerate}
-                  className="flex items-center px-2 py-1 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
+                  className="flex items-center px-2 py-1 text-xs bg-emerald-100 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
                 >
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                   </svg>
                   Regenerate
                 </button>
+
+                
                 
                 <button 
                   onClick={() => handleFeedback(true)}
-                  className="flex items-center px-2 py-1 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
+                  className="flex items-center px-2 py-1 text-xs bg-emerald-100 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
                 >
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
@@ -332,7 +395,7 @@ const ChatMessage = ({ message, isResponseAfterImage = false }) => {
                 
                 <button 
                   onClick={() => handleFeedback(false)}
-                  className="flex items-center px-2 py-1 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
+                  className="flex items-center px-2 py-1 text-xs bg-emerald-100 hover:bg-emerald-100 text-emerald-700 rounded-md transition-colors"
                 >
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2"></path>
@@ -376,7 +439,8 @@ ChatMessage.propTypes = {
     image: PropTypes.string,
     timestamp: PropTypes.instanceOf(Date)
   }).isRequired,
-  isResponseAfterImage: PropTypes.bool
+  isResponseAfterImage: PropTypes.bool,
+  index: PropTypes.number.isRequired
 };
 
 export default ChatMessage;

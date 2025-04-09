@@ -6,7 +6,12 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // No need for alias here, unless you are specifically overriding a path.
+      'react': 'react',
+      'react-dom': 'react-dom',
+      'react-dom/client': 'react-dom/client'
     },
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-dom/client']
+  }
 });

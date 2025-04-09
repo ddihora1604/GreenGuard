@@ -63,6 +63,14 @@ export const AppProvider = ({ children }) => {
     setMessages((prev) => [...prev, message]);
   };
 
+  const updateMessage = (index, updatedMessage) => {
+    setMessages((prev) => {
+      const newMessages = [...prev];
+      newMessages[index] = { ...newMessages[index], ...updatedMessage };
+      return newMessages;
+    });
+  };
+
   const removeTypingMessages = () => {
     setMessages((prev) => prev.filter((msg) => msg.status !== 'typing'));
   };
@@ -88,6 +96,7 @@ export const AppProvider = ({ children }) => {
     setError,
     handleError,
     addMessage,
+    updateMessage,
     removeTypingMessages,
     clearState,
     resetState,

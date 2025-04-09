@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, UNSAFE_NavigationContext, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import ChatMessage from './components/ChatMessage';
@@ -105,7 +105,7 @@ const DashboardPage = ({ handleImageProcess, isCollapsed }) => {
         removeTypingMessages();
         addMessage({
           type: 'bot',
-          content: `Disease detected: ${response.data.disease}\nConfidence: ${(response.data.confidence * 100).toFixed(2)}%\n\n${response.data.explanation}`,
+          content: `Disease detected: ${response.data.disease}\n\n${response.data.explanation}`,
           timestamp: new Date()
         });
 
@@ -361,6 +361,7 @@ const DashboardPage = ({ handleImageProcess, isCollapsed }) => {
                     <ChatMessage 
                       message={message} 
                       isResponseAfterImage={isResponseAfterImage}
+                      index={index}
                     />
                   </motion.div>
                 );
@@ -446,6 +447,7 @@ const ChatbotPage = ({ isCollapsed }) => {
                       <ChatMessage 
                         message={message} 
                         isResponseAfterImage={isResponseAfterImage}
+                        index={index}
                       />
                     </motion.div>
                   );
@@ -654,7 +656,7 @@ function AppContent() {
         console.log('Analysis successful:', response.data.disease);
         addMessage({
           type: 'bot',
-          content: `Disease detected: ${response.data.disease}\nConfidence: ${(response.data.confidence * 100).toFixed(2)}%\n\n${response.data.explanation}`,
+          content: `Disease detected: ${response.data.disease}\n\n${response.data.explanation}`,
           timestamp: new Date()
         });
 
@@ -795,13 +797,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router future={{ v7_startTransition: true }}>
-      <AppProvider>
-        <NotificationProvider>
-          <AppContent />
-        </NotificationProvider>
-      </AppProvider>
-    </Router>
+    <AppProvider>
+      <NotificationProvider>
+        <AppContent />
+      </NotificationProvider>
+    </AppProvider>
   );
 }
 

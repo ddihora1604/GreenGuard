@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "chatbot": "Chatbot",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Plant Disease Detection",
+    "subtitle": "Upload or capture an image to detect plant diseases",
+    "uploadButton": "Upload Image",
+    "captureButton": "Capture Image",
+    "or": "or"
+  },
+  "chatbot": {
+    "placeholder": {
+      "default": "Upload a crop image to start",
+      "waiting": "Please wait while GreenGuard detects the crop disease",
+      "ready": "Ask anything about the crop disease or its treatment"
+    },
+    "analyzing": "Analyzing image...",
+    "detecting": "Detecting Crop Disease",
+    "uploadImage": "Upload Image",
+    "regenerate": "Regenerate",
+    "copy": "Copy",
+    "copied": "Copied",
+    "speak": "Speak text",
+    "stopSpeaking": "Stop speaking",
+    "like": "Like",
+    "dislike": "Dislike"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "back": "Back to Dashboard"
+  }
+} 
