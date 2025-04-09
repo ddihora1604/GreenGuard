@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Loader, Mic, Image as ImageIcon } from 'lucide-react';
 import axios from 'axios';
 import { useApp } from '../context/AppContext';
 import { useNotifications } from '../context/NotificationContext';
+import PropTypes from 'prop-types';
 
 const ChatInput = ({
   disabled,
@@ -178,24 +179,60 @@ const ChatInput = ({
 
       removeTypingMessages();
 
-      if (response.data.error) {
-        throw new Error(response.data.message);
+      if (response.data.status === 'success') {
+        addMessage({
+          type: 'bot',
+          content: `Disease detected: ${response.data.disease}\n\n${response.data.explanation}`,
+          timestamp: new Date()
+        });
+
+        // Save to detection history
+        const historyEntry = {
+          timestamp: Date.now(),
+          image: URL.createObjectURL(file),
+          detection: response.data.disease,
+          confidence: response.data.confidence,
+          explanation: response.data.explanation,
+          crop_type: response.data.crop_type,
+          chatHistory: messages
+        };
+
+        const existingHistory = JSON.parse(sessionStorage.getItem('detectionHistory') || '[]');
+        sessionStorage.setItem('detectionHistory', JSON.stringify([...existingHistory, historyEntry]));
+
+        // Show success notification
+        addNotification({
+          title: 'Disease Detection Complete',
+          message: 'Your crop image has been successfully analyzed.',
+          type: 'success'
+        });
+
+        // If disease was detected, show disease alert
+        if (response.data.disease) {
+          addNotification({
+            title: 'Disease Alert',
+            message: 'Important information about detected crop disease',
+            type: 'warning'
+          });
+        }
+      } else {
+        throw new Error(response.data.error || 'Failed to analyze image');
       }
-
-      addMessage({
-        type: 'bot',
-        content: response.data.message,
-        timestamp: new Date()
-      });
-
     } catch (error) {
       removeTypingMessages();
-      const errorMessage = handleError(error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to process the image. Please try again.';
+      
       addMessage({
         type: 'bot',
         content: errorMessage,
         status: 'error',
         timestamp: new Date()
+      });
+
+      addNotification({
+        title: 'Detection Failed',
+        message: errorMessage,
+        type: 'error'
       });
     } finally {
       setIsLoading(false);
@@ -318,6 +355,18 @@ const ChatInput = ({
       )}
     </motion.form>
   );
+};
+
+ChatInput.propTypes = {
+  disabled: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  imageDetected: PropTypes.bool
+};
+
+ChatInput.defaultProps = {
+  disabled: false,
+  isLoading: false,
+  imageDetected: false
 };
 
 export default ChatInput;
