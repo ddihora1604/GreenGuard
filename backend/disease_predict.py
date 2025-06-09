@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.layers import Layer
 
-model_path = "C:/Users/ddihora1604/Downloads/IPD/0. GreenGaurd/backend/models/adgf_net.keras"
+model_path = "C:/Users/ddihora1604/Downloads/IPD/1. GreenGaurd/backend/models/adgf_combinedagain60.keras"
 
 class AdaptiveLesionModule(Layer):
     def __init__(self, filters, trainable=True, **kwargs):

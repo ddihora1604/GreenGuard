@@ -18,7 +18,7 @@ class ResponseGenerator:
         # Initialize the ChatGroq model
         self.llm = ChatGroq(
             groq_api_key=self.api_key,
-            model_name="qwen-2.5-coder-32b",
+            model_name="llama3-70b-8192",
             temperature=0.7,
             timeout=30
         )

@@ -1,21 +1,237 @@
-# GreenGuard - Plant Disease Detection System
+# GreenGuard - An AI-driven Interactive Chatbot for Real-time Crop Disease Detection using AGDFNet
 
-GreenGuard is an AI-powered web application designed to help farmers and agricultural specialists detect and identify plant diseases through image analysis. By leveraging advanced machine learning techniques, GreenGuard provides quick and accurate disease identification along with detailed treatment recommendations and preventive measures.
+Prototype: https://youtu.be/OE9KS9Ulcos?si=G_Co71CIU6b5h9o2
 
-![GreenGuard Logo](Logo3-removebg-preview.png)
+Research Paper: https://docs.google.com/document/d/16dlcJQwMlwsY-dh49TIpj6FXRT9mQ0T65wFbP-Y_faE/edit?tab=t.0
 
 ## Project Overview
+GreenGuard is an AI-powered, interactive web application designed to assist farmers and agricultural specialists in detecting and identifying plant diseases using image-based diagnostics. By leveraging the AGDFNet (Attention-Guided Multi-Scale Disease Feature Network) deep learning model, the system provides real-time disease identification, treatment recommendations, and preventive insights, all integrated into an intuitive chatbot interface.
 
-GreenGuard combines a React-based frontend with a Python Flask backend to create a seamless user experience for plant disease detection. The system supports multiple crop types including Rice, Cotton, Groundnut, Maize, Potato, Tomato, and more.
+## 💡 Key Features
 
-### Key Features
-- **Real-time Plant Disease Detection**: Upload or capture images for immediate analysis
-- **Multi-crop Support**: Identifies diseases across various crop types
-- **Detailed Analysis Reports**: Provides comprehensive information about detected diseases
-- **Treatment Recommendations**: Suggests effective treatment methods
-- **Interactive Chat Interface**: Ask follow-up questions about detected diseases
-- **Detection History**: Track and review previous disease detections
-- **Responsive Design**: Works on both desktop and mobile devices
+### 🧠 Real-time Plant Disease Detection
+- Upload or capture leaf images for instant analysis
+- Offline model inference using AGDFNet architecture
+- Real-time feedback with disease probability scores
+- Support for both online and offline modes
+
+### 🌾 Multi-Crop, Multi-Disease Coverage
+- Comprehensive coverage of 61 disease classes
+- Support for 11 major crop types:
+  - Bean
+  - Cotton
+  - Groundnut
+  - Maize
+  - Pepper Bell
+  - Potato
+  - Rice
+  - Spinach
+  - Sugarcane
+  - Tomato
+  - Turmeric
+
+### 📊 Rich Disease Reports
+- Class-specific precision, recall, and F1-scores
+- Disease probability heatmaps
+- Growth stage analysis
+- Severity assessment
+- Environmental factor correlation
+
+### 💊 Treatment & Prevention
+- Personalized treatment prescriptions
+- Preventive measures and best practices
+- Fertilizer recommendations
+- Integrated pest management suggestions
+- Seasonal care guidelines
+
+### 💬 AI Chatbot Interface
+- Interactive diagnosis conversations
+- Treatment recommendations
+- Fertilizer information
+- Location-based mapping
+- Weather integration
+- Growth stage advice
+
+### 🕒 Detection History
+- Comprehensive scan history
+- Progress tracking
+- Treatment effectiveness analysis
+- Exportable reports
+- Seasonal comparison
+- Growth pattern analysis
+
+### 📱 Mobile Optimization
+- Offline model inference
+- Online treatment recommendations
+- Camera integration
+- Mobile-friendly UI
+- Offline storage
+- Network-optimized images
+
+## 📚 Usage Guide
+
+### 1. Home Page
+- Upload or capture a crop leaf image
+- Support for JPG, PNG, and JPEG formats
+- Maximum file size: 5MB
+- Real-time image preview
+
+### 2. Detection Process
+- Image processed through AGDFNet
+- Multi-scale feature extraction
+- Attention-based disease localization
+- Real-time probability calculation
+
+### 3. Report Generation
+- Display of detected disease class
+- Probability score visualization
+- Treatment recommendations
+- Prevention measures
+- Export options
+
+### 4. Chatbot Interaction
+- Ask questions about diagnosis
+- Get localized advice
+- Treatment follow-up
+- Prevention queries
+- Growth stage information
+
+### 5. History Management
+- Access previous scans
+- Compare results
+- Track treatment progress
+- Export historical data
+- Analyze patterns
+
+## 🛠 Troubleshooting
+
+### 1. Upload Errors
+- **Error**: Unsupported file format
+  - **Solution**: Use JPG, PNG, or JPEG only
+  - **Tip**: Convert images using free tools
+
+- **Error**: File size too large
+  - **Solution**: Compress image before upload
+  - **Tip**: Use image compression tools
+
+### 2. Backend Connection
+- **Error**: Flask server not running
+  - **Solution**: Start backend server
+  - **Command**: `python backend.py`
+  - **Port**: 5000
+
+### 3. Model Loading
+- **Error**: Missing model file
+  - **Solution**: Place `adgf_net.keras` in `models/`
+  - **Location**: `backend/models/adgf_net.keras`
+  - **Tip**: Verify file permissions
+
+### 4. Chatbot Issues
+- **Error**: API key not found
+  - **Solution**: Check `.env` file
+  - **Variable**: `GROQ_API_KEY`
+  - **Tip**: Get key from Groq Dashboard
+
+## 🛠️ Technologies Used
+
+### Layer Stack
+
+#### Frontend
+- **Framework**: React 18+
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS
+- **Animations**: Framer Motion
+- **UI Components**: Material UI
+- **State Management**: React Context
+- **Image Processing**: HTML5 Canvas
+
+#### Backend
+- **Framework**: Flask 2.x
+- **CORS**: Flask-CORS
+- **ML Integration**: TensorFlow 2.x
+- **Chat Integration**: LangChain
+- **API Routing**: Flask-RESTful
+- **Error Handling**: Flask-Error
+
+#### Machine Learning
+- **Model Architecture**: AGDFNet
+- **Loss Function**: Adaptive Focal Loss
+- **Attention Mechanisms**: Spatial & Channel Attention
+- **Transfer Learning**: Pre-trained CNN
+- **Optimization**: AdamW
+- **Metrics**: Precision, Recall, F1-Score
+
+#### Storage & Data
+- **Session Management**: SessionStorage
+- **Image Storage**: Temporary filesystem
+- **History**: IndexedDB
+- **Cache**: Redis (optional)
+
+#### API & Integration
+- **LLM Provider**: Groq
+- **Weather API**: OpenWeatherMap
+- **Geolocation**: Geolocation API
+- **Image Processing**: Pillow
+- **Database**: SQLite (optional)
+
+
+## 🚀 Setup Instructions
+
+### Prerequisites
+- Node.js (v18+)
+- Python (v3.9+)
+- NPM or Yarn
+- Internet connection for API calls
+- Git
+- Python virtual environment
+
+### Frontend Setup
+```bash
+# Clone the repository
+$ git clone <repository-url>
+$ cd GreenGuard
+
+# Install dependencies
+$ npm install
+
+# Run development server
+$ npm run dev
+
+# Access the application at http://localhost:5173
+```
+
+### Backend Setup
+```bash
+# Navigate to the backend directory
+$ cd backend
+
+# Create and activate virtual environment
+$ python -m venv venv
+# On Windows:
+$ venv\Scripts\activate
+# On macOS/Linux:
+$ source venv/bin/activate
+
+# Install dependencies
+$ pip install -r requirements.txt
+
+# Run the backend server
+$ python backend.py
+
+# The API will be available at http://localhost:5000
+```
+
+### Environment Configuration
+1. Create a `.env` file in the backend directory with:
+```
+GROQ_API_KEY=your_groq_api_key
+OPENWEATHER_API_KEY=your_openweather_api_key
+```
+
+2. Get your API keys from:
+- Groq Dashboard: [https://console.groq.com](https://console.groq.com)
+- OpenWeatherMap: [https://openweathermap.org/api](https://openweathermap.org/api)
+
 
 ## Project Structure
 
@@ -47,94 +263,3 @@ GreenGuard/
 ├── tailwind.config.js        # Tailwind CSS configuration
 └── vite.config.js            # Vite configuration
 ```
-
-## Machine Learning Model
-
-GreenGuard uses a custom Convolutional Neural Network (CNN) architecture with an Adaptive Lesion Module for improved disease detection accuracy. The model:
-
-- Supports 60+ different plant diseases across 11 crop types
-- Utilizes adaptive focal loss for handling class imbalance
-- Implements attention mechanisms to focus on disease-specific regions
-- Achieves high accuracy through transfer learning techniques
-
-## Setup Instructions
-
-### Prerequisites
-- Node.js (v18+)
-- Python (v3.9+)
-- NPM or Yarn
-- Internet connection for API calls
-
-### Frontend Setup
-```bash
-# Clone the repository (if not already done)
-git clone <repository-url>
-cd GreenGuard
-
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Access the application at http://localhost:5173
-```
-
-### Backend Setup
-```bash
-# Navigate to the backend directory
-cd backend
-
-# Create and activate a virtual environment
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the backend server
-python backend.py
-
-# The API will be available at http://localhost:5000
-```
-
-### Environment Configuration
-1. Create a `.env` file in the backend directory with:
-```
-GROQ_API_KEY=your_groq_api_key
-```
-2. Get your Groq API key from the [Groq Dashboard](https://console.groq.com)
-
-## Usage Guide
-
-1. **Home Screen**: Upload an image or use the camera to capture a plant leaf
-2. **Disease Detection**: The system will analyze the image and display results
-3. **Detailed Information**: View comprehensive details about the detected disease
-4. **Treatment Options**: Get recommended treatments and preventive measures
-5. **Chat Interface**: Ask follow-up questions about the disease or treatment
-6. **History**: Access previous detection results from the sidebar
-
-## Troubleshooting
-
-- **Image Upload Issues**: Ensure image is in JPG, PNG, or JPEG format
-- **Backend Connection Errors**: Check if the Flask server is running on port 5000
-- **Model Loading Errors**: Verify the model file exists in the correct location
-- **API Key Issues**: Ensure your Groq API key is valid and properly set in the .env file
-
-## Technologies Used
-- **Frontend**: React, Vite, TailwindCSS, Framer Motion, Material UI
-- **Backend**: Flask, Flask-CORS, TensorFlow, LangChain
-- **AI/ML**: TensorFlow, Custom CNN, Groq LLM API
-- **Data Storage**: SessionStorage for detection history
-
-## Project Cleanup
-- Removed redundant code and optimized model loading
-- Cleaned up build artifacts and bytecode files
-- Added comprehensive .gitignore rules
-- Organized codebase for better maintainability
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
