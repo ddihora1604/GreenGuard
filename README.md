@@ -2,7 +2,7 @@
 
 Prototype: https://youtu.be/OE9KS9Ulcos?si=G_Co71CIU6b5h9o2
 
-Research Paper: https://docs.google.com/document/d/16dlcJQwMlwsY-dh49TIpj6FXRT9mQ0T65wFbP-Y_faE/edit?tab=t.0
+Research Paper: https://link.springer.com/chapter/10.1007/978-3-032-15404-0_35
 
 ## Project Overview
 GreenGuard is an AI-powered, interactive web application designed to assist farmers and agricultural specialists in detecting and identifying plant diseases using image-based diagnostics. By leveraging the AGDFNet (Attention-Guided Multi-Scale Disease Feature Network) deep learning model, the system provides real-time disease identification, treatment recommendations, and preventive insights, all integrated into an intuitive chatbot interface.
